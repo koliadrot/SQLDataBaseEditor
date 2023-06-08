@@ -1,0 +1,55 @@
+{
+      "Clients": {
+      "Id": "Clients",
+      "RootPath": "/Clients/Client",
+      "Table": "Clients",
+      "DataBaseSettings": "Data Source=HEARE YOUR DATA FOR ENTER;Initial Catalog=NAME DATA BASE;Integrated Security=True",
+      "Entries": {
+        "CARDCODE": "@CardCode",
+        "STARTDATE": "@StartDate",
+        "FINISHDATE": "@FinishDate",
+        "LASTNAME": "@LastName",
+        "FIRSTNAME": "@FirstName",
+        "SURNAME": "@SurName",
+        "GENDER": "@Gender",
+        "BIRTHDAY": "@Birthday",
+        "PHONEHOME": "@PhoneHome",
+        "PHONEMOBIL": "@PhoneMobil",
+        "EMAIL": "@Email",
+        "CITY": "@City",
+        "STREET": "@Street",
+        "HOUSE": "@House",
+        "APARTMENT": "@Apartment"
+      }
+    },
+    "Cards": {
+      "Id": "Cards",
+      "RootPath": "/Cards/Card",
+      "Table": "Cards",
+      "DataBaseSettings": "Data Source=HEARE YOUR DATA FOR ENTER;Initial Catalog=NAME DATA BASE;Integrated Security=True",
+      "Entries": {
+        "CARDCODE": "@CardCode",
+        "STARTDATE": "@StartDate",
+        "FINISHDATE": "@FinishDate",
+        "LASTNAME": "@LastName",
+        "FIRSTNAME": "@FirstName",
+        "SURNAME": "@SurName",
+        "FULLNAME": "@FullName",
+        "GENDERID": "@GenderId",
+        "BIRTHDAY": "@Birthday",
+        "PHONEHOME": "@PhoneHome",
+        "PHONEMOBIL": "@PhoneMobil",
+        "EMAIL": "@Email",
+        "CITY": "@City",
+        "STREET": "@Street",
+        "HOUSE": "@House",
+        "APARTMENT": "@Apartment",
+        "ALTADDRESS": "@AltAddress",
+        "CARDTYPE": "@CardType",
+        "OWNERGUID": "@OwnerGuid",
+        "CARDPER": "@CardPer",
+        "TURNOVER": "@Turnover"
+      }
+    }
+  
+}
