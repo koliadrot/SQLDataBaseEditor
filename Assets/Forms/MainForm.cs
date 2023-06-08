@@ -8,6 +8,7 @@
     /// </summary>
     public partial class MainForm : Form
     {
+        //TODO:Вынести в отдельный файл и парсить оттуда данные для подключения к базе
         private string DATA_BASE = @"Data Source=DESKTOP-8O0TOOS\SQLTEST;Initial Catalog=DataBase;Integrated Security=True";
 
         public MainForm()
@@ -30,10 +31,10 @@
         {
             DataForm cardForm = new DataForm(dataSystem, this);
             cardForm.Show();
-            cardForm.FormClosed += QuitApplication;
+            cardForm.FormClosed += AutoShowForm;
             Hide();
         }
 
-        private void QuitApplication(object sender, FormClosedEventArgs e) => Close();
+        private void AutoShowForm(object sender, FormClosedEventArgs e) => Show();
     }
 }
