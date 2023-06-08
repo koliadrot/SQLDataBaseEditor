@@ -29,7 +29,7 @@
 
         private void OpenDataBaseForm(AbstractDataBaseSystem dataSystem)
         {
-            DataForm cardForm = new DataForm(dataSystem, this);
+            DataForm cardForm = new DataForm(dataSystem);
             cardForm.Show();
             cardForm.FormClosed += AutoShowForm;
             Hide();

@@ -5,11 +5,9 @@
     public partial class DataForm : Form
     {
         private AbstractDataBaseSystem dataSystem;
-        private Form previousForm;
 
-        public DataForm(AbstractDataBaseSystem abstractDataSystem, Form form)
+        public DataForm(AbstractDataBaseSystem abstractDataSystem)
         {
-            previousForm = form;
             dataSystem = abstractDataSystem;
             InitializeComponent();
             dataLabel.Text = dataSystem.Id;
@@ -17,7 +15,12 @@
 
         private void DataForm_Load(object sender, System.EventArgs e) => DrawGridData();
 
-        private void SaveDataOnDataBase_ButtonClick(object sender, System.EventArgs e) => dataSystem.SaveDataBaseSystem(dataGridView);
+        private void SaveDataOnDataBase_ButtonClick(object sender, System.EventArgs e)
+        {
+            dataSystem.DeleteAllData();
+            dataSystem.SaveDataBaseSystem(dataGridView);
+        }
+
         private void LoadDataFromDataBase_ButtonClick(object sender, System.EventArgs e) => DrawGridData();
 
         private void DrawGridData()
@@ -38,10 +41,6 @@
             }
         }
 
-        private void Back_ButtonClick(object sender, System.EventArgs e)
-        {
-            previousForm.Show();
-            Close();
-        }
+        private void Back_ButtonClick(object sender, System.EventArgs e) => Close();
     }
 }

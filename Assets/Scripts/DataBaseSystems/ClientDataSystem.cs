@@ -1,5 +1,6 @@
 ﻿namespace SQLDataBaseEditor
 {
+    using System;
     using System.Data;
     using System.Data.SqlClient;
     using System.Windows.Forms;
@@ -15,10 +16,13 @@
         private const string ROOT_PATH = "/Clients/Client";
 
         private const string CLIENTS_TABLE = "Clients";
+
         private const string FIRST_NAME_KEY = "FIRSTNAME";
         private const string FIRST_NAME_VALUE = "@FirstName";
+
         private const string LAST_NAME_KEY = "LASTNAME";
         private const string LAST_NAME_VALUE = "@LastName";
+
         private const string CARD_CODE_KEY = "CARDCODE";
         private const string CARD_CODE_VALUE = "@CardCode";
 
@@ -27,19 +31,30 @@
             connectionSettings = connectionDataBase;
         }
 
+        //NOTE:Возможно стоит переделать систему сохранения под каждую ячейку.Зависит от UI.
         public override void SaveDataBaseSystem(DataGridView dataGridView)
         {
             using (SqlConnection connection = new SqlConnection(connectionSettings))
             {
-                string query = GetCommandDataClients(CARD_CODE_KEY, CARD_CODE_VALUE, FIRST_NAME_KEY, FIRST_NAME_VALUE, LAST_NAME_KEY, LAST_NAME_VALUE);
-
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue(LAST_NAME_VALUE, dataGridView.CurrentRow.Cells[LAST_NAME_KEY].Value);
-                command.Parameters.AddWithValue(FIRST_NAME_VALUE, dataGridView.CurrentRow.Cells[FIRST_NAME_KEY].Value);
-                command.Parameters.AddWithValue(CARD_CODE_VALUE, dataGridView.CurrentRow.Cells[CARD_CODE_KEY].Value);
-
                 connection.Open();
-                command.ExecuteNonQuery();
+                foreach (DataGridViewRow row in dataGridView.Rows)
+                {
+                    string query = GetNewClientCommand();
+
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue(LAST_NAME_VALUE, row.Cells[LAST_NAME_KEY].Value);
+                    command.Parameters.AddWithValue(FIRST_NAME_VALUE, row.Cells[FIRST_NAME_KEY].Value);
+                    command.Parameters.AddWithValue(CARD_CODE_VALUE, row.Cells[CARD_CODE_KEY].Value);
+
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    catch (SqlException ex)
+                    {
+                        Console.WriteLine($"Ошибка при сохранении данных у таблицы в базу данных. Ex = {ex}");
+                    }
+                }
             }
         }
         public override DataTable LoadDataBaseSystem()
@@ -52,6 +67,18 @@
                 adapter.Fill(dataset, CLIENTS_TABLE);
 
                 return dataset.Tables[CLIENTS_TABLE];
+            }
+        }
+
+        public override void DeleteAllData()
+        {
+            using (SqlConnection connection = new SqlConnection(connectionSettings))
+            {
+                string query = SQLCommandExtensions.DeleteDataTable(CLIENTS_TABLE);
+                SqlCommand command = new SqlCommand(query, connection);
+
+                connection.Open();
+                command.ExecuteNonQuery();
             }
         }
 
@@ -69,9 +96,9 @@
                     string lastName = clientNode.Attributes[LAST_NAME_KEY].Value;
                     string firstName = clientNode.Attributes[FIRST_NAME_KEY].Value;
 
-                    string insertQuery = GetInsertDataClients(CARD_CODE_KEY, FIRST_NAME_KEY, LAST_NAME_KEY, CARD_CODE_VALUE, FIRST_NAME_VALUE, LAST_NAME_VALUE);
+                    string query = GetNewClientCommand();
 
-                    SqlCommand command = new SqlCommand(insertQuery, connection);
+                    SqlCommand command = new SqlCommand(query, connection);
                     command.Parameters.AddWithValue(CARD_CODE_VALUE, cardCode);
                     command.Parameters.AddWithValue(LAST_NAME_VALUE, lastName);
                     command.Parameters.AddWithValue(FIRST_NAME_VALUE, firstName);
@@ -81,11 +108,7 @@
             }
         }
 
-        private string GetCommandDataClients(string cardCodeKey, string cardCodeValue, string firstNameKey, string firstNameValue, string lastNameKey, string lastNameValue) =>
-            $"UPDATE Clients SET {lastNameKey} = {lastNameValue}, {firstNameKey} = {firstNameValue} WHERE {cardCodeKey} = {cardCodeValue}";
-
-        private string GetInsertDataClients(string cardCodeKey, string firstNameKey, string lastNameKey, string cardCodeValue, string firstNameValue, string lastNameValue) =>
-            $"INSERT INTO Clients ({cardCodeKey}, {lastNameKey}, {firstNameKey}) VALUES ({cardCodeValue}, {lastNameValue}, {firstNameValue})";
-
+        private string GetNewClientCommand() =>
+            $"insert into {CLIENTS_TABLE} ({CARD_CODE_KEY}, {LAST_NAME_KEY}, {FIRST_NAME_KEY}) values ({CARD_CODE_VALUE}, {LAST_NAME_VALUE}, {FIRST_NAME_VALUE})";
     }
 }

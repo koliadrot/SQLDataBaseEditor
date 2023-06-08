@@ -26,6 +26,11 @@
         public abstract DataTable LoadDataBaseSystem();
 
         /// <summary>
+        /// Удаляет все данные у таблицы
+        /// </summary>
+        public abstract void DeleteAllData();
+
+        /// <summary>
         /// Загрузка данных в базу через импорт xml файла
         /// </summary>
         /// <param name="xmlFilePath"></param>

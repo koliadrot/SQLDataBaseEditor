@@ -56,17 +56,17 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Assets\Scripts\Extensions\SQLCommandExtensions.cs" />
-    <Compile Include="Assets\Forms\ClientForm.cs">
+    <Compile Include="Assets\Forms\DataForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Assets\Forms\ClientForm.Designer.cs">
-      <DependentUpon>ClientForm.cs</DependentUpon>
+    <Compile Include="Assets\Forms\DataForm.Designer.cs">
+      <DependentUpon>DataForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Assets\Scripts\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Assets\Scripts\Extensions\StaticData.cs" />
-    <EmbeddedResource Include="Assets\Forms\ClientForm.resx">
-      <DependentUpon>ClientForm.cs</DependentUpon>
+    <EmbeddedResource Include="Assets\Forms\DataForm.resx">
+      <DependentUpon>DataForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Assets\Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

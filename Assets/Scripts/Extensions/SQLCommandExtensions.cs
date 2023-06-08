@@ -11,5 +11,12 @@
         /// <param name="table"></param>
         /// <returns></returns>
         public static string GetDataTable(string table) => $"SELECT * FROM {table}";
+
+        /// <summary>
+        /// Удаляет данные у таблицы
+        /// </summary>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        public static string DeleteDataTable(string table) => $"DELETE FROM {table}";
     }
 }

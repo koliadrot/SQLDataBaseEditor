@@ -31,5 +31,7 @@
         public override void SaveDataBaseSystem(DataGridView dataGridView)
         {
         }
+
+        public override void DeleteAllData() => throw new System.NotImplementedException();
     }
 }
