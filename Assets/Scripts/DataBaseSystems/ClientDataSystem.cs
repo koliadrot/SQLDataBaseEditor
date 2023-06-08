@@ -1,6 +1,7 @@
 ﻿namespace SQLDataBaseEditor
 {
     using System;
+    using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
     using System.Windows.Forms;
@@ -17,14 +18,25 @@
 
         private const string CLIENTS_TABLE = "Clients";
 
-        private const string FIRST_NAME_KEY = "FIRSTNAME";
-        private const string FIRST_NAME_VALUE = "@FirstName";
-
-        private const string LAST_NAME_KEY = "LASTNAME";
-        private const string LAST_NAME_VALUE = "@LastName";
-
-        private const string CARD_CODE_KEY = "CARDCODE";
-        private const string CARD_CODE_VALUE = "@CardCode";
+        //NOTE:Возможно стоит из файла xml примера парсить ключи
+        private Dictionary<string, string> dataClients = new Dictionary<string, string>()
+        {
+            { "CARDCODE", "@CardCode" },
+            { "STARTDATE", "@StartDate" },
+            { "FINISHDATE", "@FinishDate" },
+            { "LASTNAME", "@LastName" },
+            { "FIRSTNAME", "@FirstName" },
+            { "SURNAME", "@Surname" },
+            { "GENDER", "@Gender" },
+            { "BIRTHDAY", "@Birthday" },
+            { "PHONEHOME", "@PhoneHome" },
+            { "PHONEMOBIL", "@PhoneMobil" },
+            { "EMAIL", "@Email" },
+            { "CITY", "@City" },
+            { "STREET", "@Street" },
+            { "HOUSE", "@House" },
+            { "APARTMENT", "@Apartment" }
+        };
 
         public ClientDataSystem(string connectionDataBase, string id) : base(id)
         {
@@ -39,12 +51,15 @@
                 connection.Open();
                 foreach (DataGridViewRow row in dataGridView.Rows)
                 {
-                    string query = GetNewClientCommand();
+                    string query = GetNewClientCommand(dataClients);
 
                     SqlCommand command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue(LAST_NAME_VALUE, row.Cells[LAST_NAME_KEY].Value);
-                    command.Parameters.AddWithValue(FIRST_NAME_VALUE, row.Cells[FIRST_NAME_KEY].Value);
-                    command.Parameters.AddWithValue(CARD_CODE_VALUE, row.Cells[CARD_CODE_KEY].Value);
+                    foreach (var kvp in dataClients)
+                    {
+                        string key = kvp.Key;
+                        string value = kvp.Value;
+                        command.Parameters.AddWithValue(value, row.Cells[key].Value);
+                    }
 
                     try
                     {
@@ -52,11 +67,12 @@
                     }
                     catch (SqlException ex)
                     {
-                        Console.WriteLine($"Ошибка при сохранении данных у таблицы в базу данных. Ex = {ex}");
+                        Console.WriteLine($"Ошибка при сохранении данных таблицы в базу данных. Ex = {ex}");
                     }
                 }
             }
         }
+
         public override DataTable LoadDataBaseSystem()
         {
             using (SqlConnection connection = new SqlConnection(connectionSettings))
@@ -92,23 +108,25 @@
                 connection.Open();
                 foreach (XmlNode clientNode in xmlDoc.SelectNodes(ROOT_PATH))
                 {
-                    string cardCode = clientNode.Attributes[CARD_CODE_KEY].Value;
-                    string lastName = clientNode.Attributes[LAST_NAME_KEY].Value;
-                    string firstName = clientNode.Attributes[FIRST_NAME_KEY].Value;
+                    SqlCommand command = new SqlCommand(GetNewClientCommand(dataClients), connection);
 
-                    string query = GetNewClientCommand();
-
-                    SqlCommand command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue(CARD_CODE_VALUE, cardCode);
-                    command.Parameters.AddWithValue(LAST_NAME_VALUE, lastName);
-                    command.Parameters.AddWithValue(FIRST_NAME_VALUE, firstName);
+                    foreach (KeyValuePair<string, string> kvp in dataClients)
+                    {
+                        string attributeValue = clientNode.Attributes[kvp.Key].Value;
+                        command.Parameters.AddWithValue(kvp.Value, attributeValue);
+                    }
 
                     command.ExecuteNonQuery();
                 }
             }
         }
 
-        private string GetNewClientCommand() =>
-            $"insert into {CLIENTS_TABLE} ({CARD_CODE_KEY}, {LAST_NAME_KEY}, {FIRST_NAME_KEY}) values ({CARD_CODE_VALUE}, {LAST_NAME_VALUE}, {FIRST_NAME_VALUE})";
+        private string GetNewClientCommand(Dictionary<string, string> dataClients)
+        {
+            string columns = string.Join(", ", dataClients.Keys);
+            string values = string.Join(", ", dataClients.Values);
+
+            return $"insert into {CLIENTS_TABLE} ({columns}) values ({values})";
+        }
     }
 }
