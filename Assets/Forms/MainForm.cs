@@ -1,6 +1,9 @@
 ﻿namespace SQLDataBaseEditor
 {
+    using Newtonsoft.Json;
     using System;
+    using System.Diagnostics;
+    using System.IO;
     using System.Windows.Forms;
 
     /// <summary>
@@ -8,26 +11,56 @@
     /// </summary>
     public partial class MainForm : Form
     {
-        //TODO:Вынести в отдельный файл и парсить оттуда данные для подключения к базе
-        private string DATA_BASE = @"Data Source=DESKTOP-8O0TOOS\SQLTEST;Initial Catalog=DataBase;Integrated Security=True";
+        private DataBase data;
+        private const string CONFIG_NAME = "DataBaseConfigs.json";
 
         public MainForm()
         {
+            InitConfigs();
             InitializeComponent();
         }
+
+        private void InitConfigs()
+        {
+            string pathJsonConfig = Path.Combine(Application.StartupPath, CONFIG_NAME);
+            if (!File.Exists(pathJsonConfig))
+            {
+                Debug.WriteLine($"Отсутствует файл конфигурации {CONFIG_NAME}");
+            }
+            else
+            {
+                string json = File.ReadAllText(pathJsonConfig);
+                data = JsonConvert.DeserializeObject<DataBase>(json);
+            }
+        }
+
         private void ClientFormOpen_ButtonClick(object sender, EventArgs e)
         {
-            ClientDataSystem clientDataSystem = new ClientDataSystem(DATA_BASE, nameof(ClientDataSystem));
-            OpenDataBaseForm(clientDataSystem);
+            if (data == null)
+            {
+                Debug.WriteLine($"Отсутствует файл конфигурации {CONFIG_NAME}");
+            }
+            else
+            {
+                DataTableSystem clientDataSystem = new DataTableSystem(data.Clients);
+                OpenDataBaseForm(clientDataSystem);
+            }
         }
 
         private void CardFormOpen_ButtonClick(object sender, EventArgs e)
         {
-            CardDataSystem cardDataSystem = new CardDataSystem(DATA_BASE, nameof(CardDataSystem));
-            OpenDataBaseForm(cardDataSystem);
+            if (data == null)
+            {
+                Debug.WriteLine($"Отсутствует файл конфигурации {CONFIG_NAME}");
+            }
+            else
+            {
+                DataTableSystem cardDataSystem = new DataTableSystem(data.Cards);
+                OpenDataBaseForm(cardDataSystem);
+            }
         }
 
-        private void OpenDataBaseForm(AbstractDataBaseSystem dataSystem)
+        private void OpenDataBaseForm(DataTableSystem dataSystem)
         {
             DataForm cardForm = new DataForm(dataSystem);
             cardForm.Show();

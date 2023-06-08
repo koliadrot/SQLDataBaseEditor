@@ -54,7 +54,7 @@
             this.importButton.TabIndex = 2;
             this.importButton.Text = "Import XML";
             this.importButton.UseVisualStyleBackColor = true;
-            this.importButton.Click += new System.EventHandler(this.ImportDataToDataBase);
+            this.importButton.Click += new System.EventHandler(this.ImportXMLFileToDataBase);
             // 
             // saveButton
             // 

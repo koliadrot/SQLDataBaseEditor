@@ -2,11 +2,15 @@
 {
     using System.Windows.Forms;
 
+    /// <summary>
+    /// Форма с базой данных
+    /// </summary>
     public partial class DataForm : Form
     {
-        private AbstractDataBaseSystem dataSystem;
+        private DataTableSystem dataSystem;
+        private const string XML_FILTER = "XML Files (*.xml)|*.xml";
 
-        public DataForm(AbstractDataBaseSystem abstractDataSystem)
+        public DataForm(DataTableSystem abstractDataSystem)
         {
             dataSystem = abstractDataSystem;
             InitializeComponent();
@@ -29,10 +33,10 @@
             dataGridView.DataSource = data;
         }
 
-        private void ImportDataToDataBase(object sender, System.EventArgs e)
+        private void ImportXMLFileToDataBase(object sender, System.EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = StaticData.XML_FILTER;
+            openFileDialog.Filter = XML_FILTER;
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string xmlFilePath = openFileDialog.FileName;
