@@ -8,7 +8,7 @@
     /// <summary>
     /// Система клиентской базы данных
     /// </summary>
-    public class ClientSystem
+    public class ClientDataSystem : AbstractDataBaseSystem
     {
         private readonly string connectionSettings;
 
@@ -22,34 +22,12 @@
         private const string CARD_CODE_KEY = "CARDCODE";
         private const string CARD_CODE_VALUE = "@CardCode";
 
-        public ClientSystem(string connectionDataBase)
+        public ClientDataSystem(string connectionDataBase, string id) : base(id)
         {
             connectionSettings = connectionDataBase;
         }
 
-
-        /// <summary>
-        /// Загрузка данных c базы данных
-        /// </summary>
-        /// <param name="dataGridView"></param>
-        public DataTable LoadDataFromDatabase()
-        {
-            using (SqlConnection connection = new SqlConnection(connectionSettings))
-            {
-                string query = SQLCommandExtensions.GetDataTable(CLIENTS_TABLE);
-                SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
-                DataSet dataset = new DataSet();
-                adapter.Fill(dataset, CLIENTS_TABLE);
-
-                return dataset.Tables[CLIENTS_TABLE];
-            }
-        }
-
-        /// <summary>
-        /// Сохранение данных с грид таблицы в базу данных
-        /// </summary>
-        /// <param name="dataGridView"></param>
-        public void SaveChangesToDatabase(DataGridView dataGridView)
+        public override void SaveDataBaseSystem(DataGridView dataGridView)
         {
             using (SqlConnection connection = new SqlConnection(connectionSettings))
             {
@@ -64,12 +42,20 @@
                 command.ExecuteNonQuery();
             }
         }
+        public override DataTable LoadDataBaseSystem()
+        {
+            using (SqlConnection connection = new SqlConnection(connectionSettings))
+            {
+                string query = SQLCommandExtensions.GetDataTable(CLIENTS_TABLE);
+                SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+                DataSet dataset = new DataSet();
+                adapter.Fill(dataset, CLIENTS_TABLE);
 
+                return dataset.Tables[CLIENTS_TABLE];
+            }
+        }
 
-        /// <summary>
-        /// Импорт клиентов в базу данных из xml файла
-        /// </summary>
-        public void ImportXMLFileToDataBase(string xmlFilePath)
+        public override void ImportXMLFileToDataBase(string xmlFilePath)
         {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(xmlFilePath);
@@ -100,5 +86,6 @@
 
         private string GetInsertDataClients(string cardCodeKey, string firstNameKey, string lastNameKey, string cardCodeValue, string firstNameValue, string lastNameValue) =>
             $"INSERT INTO Clients ({cardCodeKey}, {lastNameKey}, {firstNameKey}) VALUES ({cardCodeValue}, {lastNameValue}, {firstNameValue})";
+
     }
 }
